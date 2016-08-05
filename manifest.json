@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "MyAnimeListVA",
+  "version": "1.0.0",
+  "description": "When viewing a voice actor/actress's page on MAL, roles for anime you have seen will be highlighted",
+  
+  
+  "page_action": {
+    "default_title": "MyAnimeListVA",
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions" : [
+    "tabs",
+    "http://myanimelist.net/people/*",
+    "https://myanimelist.net/people/*",
+	"*://*.myanimelist.net/people/*"
+  ],
+   "content_scripts": [{
+    "matches": ["*://*.myanimelist.net/people/*"],
+    "js": ["content.js"],
+    "run_at": "document_end",
+    "all_frames": true
+  }],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
