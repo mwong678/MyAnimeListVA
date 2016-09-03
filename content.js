@@ -13,9 +13,10 @@ function init() {
   }
 
   var xhttp = new XMLHttpRequest();
-  var url = 'http://myanimelist.net/animelist/' + name;
+  var url = 'https://myanimelist.net/animelist/' + name;
   xhttp.onload = function() {
     if (parseXHTTP(xhttp.responseText)) {
+      //console.log(listOfTitlesHash);
       highLightTitles(listOfTitles);
     } else {
       console.log("Failed to parse user anime list");
@@ -51,7 +52,10 @@ function highLightTitles(list) {
         if (j == 1) {
           aLink = col.getElementsByTagName("A");
           if (searchTitle(aLink[0].text)) {
-            row.setAttribute("style", "background-color: yellow;");
+            if (listOfTitlesHash[aLink[0].text] != 6){
+              //will not highlight planned to watch titles
+              row.setAttribute("style", "background-color: yellow;");
+            }
           }
         }
       }
@@ -74,7 +78,7 @@ function parseXHTTP(text) {
     return false;
   }
   for (var i = 0; i < json.length; i++) {
-    listOfTitlesHash[json[i].anime_title] = 1;
+    listOfTitlesHash[json[i].anime_title] = json[i].status;
   }
   return true;
 }
