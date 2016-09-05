@@ -1,12 +1,14 @@
 var txt;
 var listOfTitles = [];
 var listOfTitlesHash = {};
-$(document).ready(function() {
-  init();
-});
+var listOfStatusHeadersHash = {}; // title to number of entries
+var order = ["Currently Watching", "Completed", "On Hold", "Dropped", "Plan to Watch"];
+//$(document).ready(function() {init();});
+document.onload = init();
 
 function init() {
   var name = getUserName();
+  //var name = "Memor"
   if (!name) {
     console.log("User is not logged in!");
     return;
@@ -16,7 +18,6 @@ function init() {
   var url = 'https://myanimelist.net/animelist/' + name;
   xhttp.onload = function() {
     if (parseXHTTP(xhttp.responseText)) {
-      //console.log(listOfTitlesHash);
       highLightTitles(listOfTitles);
     } else {
       console.log("Failed to parse user anime list");
@@ -72,15 +73,54 @@ function parseXHTTP(text) {
   var getInfo = document.createElement('TD');
   getInfo.innerHTML = text;
   var rows = getInfo.getElementsByClassName('list-table')[0];
-  txt = rows.getAttribute('data-items');
-  var json = JSON.parse(txt);
-  if (!json) {
-    return false;
+  if (!rows){
+    //classic theme
+    rows = getInfo.getElementsByClassName('status_not_selected');
+    for (var i = 0; i < rows.length;i++){
+      listOfStatusHeadersHash[rows[i].getElementsByTagName('A')[0].innerText.trim()] = rows[i].getElementsByTagName('A')[0].getAttribute('title').split(" ")[0];
+      //console.log(rows[i].getElementsByTagName('A')[0].innerText.trim()+ "     " + rows[i].getElementsByTagName('A')[0].getAttribute('title').split(" ")[0]);
+    }
+
+    count = 0;
+    statusNum = 1;
+    rows = getInfo.getElementsByClassName('animetitle');
+    for (var i = 0; i < order.length; i++){
+      status = order[i];
+      switch (status){
+        case "Currently Watching":
+          statusNum = 1;
+          break;
+        case "Completed":
+          statusNum = 2;
+          break;
+      case "On Hold":
+        statusNum = 3;
+        break;
+      case "Dropped":
+        statusNum = 4;
+        break;
+      case "Plan to Watch":
+        statusNum = 6;
+        break;
+      }
+      for (var j = 0; j < listOfStatusHeadersHash[status]; j++){
+        listOfTitlesHash[rows[count].innerText.trim()] = statusNum;
+        //console.log(rows[count].innerText.trim() + "  "+ statusNum);
+        count++;
+      }
+    }
+    return true;
+  }else{
+    txt = rows.getAttribute('data-items');
+    var json = JSON.parse(txt);
+    if (!json) {
+      return false;
+    }
+    for (var i = 0; i < json.length; i++) {
+      listOfTitlesHash[json[i].anime_title] = json[i].status;
+    }
+    return true;
   }
-  for (var i = 0; i < json.length; i++) {
-    listOfTitlesHash[json[i].anime_title] = json[i].status;
-  }
-  return true;
 }
 
 function searchTitle(title) {
