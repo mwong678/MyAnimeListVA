@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MyAnimeListVA",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "When viewing a voice actor/actress's page on MAL, roles for anime you have seen will be highlighted.",
   "icons": {
     "16": "icons/icon16.png",
